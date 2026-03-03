@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="GolTime - نتائج مباشرة، توقعات، ومباريات كرة القدم">
+<title>GolTime | الكرة في وقتها</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e3000f;
+    --red-dark: #a80009;
+    --red-glow: rgba(227,0,15,0.4);
+    --black: #0a0a0a;
+    --black2: #111111;
+    --black3: #1a1a1a;
+    --white: #ffffff;
+    --gray: #888888;
+    --gray2: #333333;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Cairo', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NAVBAR */
+  nav {
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--red);
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    color: var(--white);
+    letter-spacing: 2px;
+  }
+  .logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--white);
+    background: var(--red);
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%);
+    padding: 32px 16px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--gray2);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '⚽';
+    position: absolute;
+    font-size: 200px;
+    opacity: 0.03;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: spin 20s linear infinite;
+  }
+  @keyframes spin { to { transform: translateX(-50%) rotate(360deg); } }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--red);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    animation: pulse 2s infinite;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 var(--red-glow)} 50%{box-shadow:0 0 0 8px transparent} }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3rem;
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+  .hero h1 span { color: var(--red); }
+  .hero p { color: var(--gray); font-size: 0.9rem; margin-top: 6px; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--black2);
+    border-bottom: 1px solid var(--gray2);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 100px;
+    padding: 14px 8px;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--gray);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: var(--red);
+    border-bottom-color: var(--red);
+    background: rgba(227,0,15,0.05);
+  }
+  .tab:hover { color: var(--white); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 16px; }
+  .section.active { display: block; }
+
+  /* MATCH CARD */
+  .league-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--black3);
+    border-radius: 10px 10px 0 0;
+    margin-top: 16px;
+    border-right: 3px solid var(--red);
+  }
+  .league-header:first-child { margin-top: 0; }
+  .league-name { font-size: 0.85rem; font-weight: 700; color: var(--gray); }
+  .league-flag { font-size: 1.1rem; }
+
+  .match-card {
+    background: var(--black3);
+    border-bottom: 1px solid var(--gray2);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .match-card:last-child { border-radius: 0 0 10px 10px; border-bottom: none; }
+  .match-card:hover { background: #222; }
+
+  .match-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  .team-away { flex-direction: row-reverse; }
+  .team-name { font-size: 0.9rem; font-weight: 700; }
+  .team-logo { width: 28px; height: 28px; border-radius: 50%; background: var(--gray2); display:flex; align-items:center; justify-content:center; font-size:1rem; }
+
+  .score-box {
+    text-align: center;
+    min-width: 70px;
+  }
+  .score {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.6rem;
+    letter-spacing: 4px;
+    color: var(--white);
+  }
+  .score.live { color: var(--red); }
+  .match-time {
+    font-size: 0.7rem;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+  .match-time.live-time {
+    color: var(--red);
+    font-weight: 700;
+    animation: blink 1s infinite;
+  }
+
+  /* STATUS BADGE */
+  .status-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+  }
+  .status-live { background: var(--red); color: white; }
+  .status-ft { background: var(--gray2); color: var(--gray); }
+  .status-ns { background: transparent; border: 1px solid var(--gray2); color: var(--gray); }
+
+  /* STANDINGS TABLE */
+  .standings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    background: var(--black3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 16px;
+  }
+  .standings-table th {
+    background: var(--red);
+    color: white;
+    padding: 10px 8px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .standings-table th:first-child { text-align: right; padding-right: 12px; }
+  .standings-table td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--gray2);
+    color: var(--gray);
+  }
+  .standings-table td:first-child { text-align: right; padding-right: 12px; color: var(--white); }
+  .standings-table tr:last-child td { border-bottom: none; }
+  .standings-table tr:hover td { background: #222; }
+  .rank { font-weight: 700; color: var(--gray); width: 24px; display: inline-block; }
+  .rank.top3 { color: var(--red); }
+  .pts { font-weight: 700; color: var(--white); }
+
+  /* PREDICTION CARD */
+  .pred-card {
+    background: var(--black3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--gray2);
+    position: relative;
+    overflow: hidden;
+  }
+  .pred-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 4px; height: 100%;
+    background: var(--red);
+  }
+  .pred-teams {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .pred-teams span { color: var(--red); margin: 0 8px; }
+  .pred-bars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 10px;
+  }
+  .bar-home { background: var(--red); transition: width 1s; }
+  .bar-draw { background: var(--gray2); transition: width 1s; }
+  .bar-away { background: #444; transition: width 1s; }
+  .pred-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--gray);
+  }
+  .pred-win { color: var(--red); font-weight: 700; }
+  .pred-league { font-size: 0.75rem; color: var(--gray); margin-bottom: 8px; }
+  .pred-time { font-size: 0.75rem; color: var(--gray); }
+
+  /* LOADING */
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray);
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--gray2);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin2 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes spin2 { to { transform: rotate(360deg); } }
+
+  /* FOOTER */
+  footer {
+    background: var(--black2);
+    border-top: 1px solid var(--gray2);
+    padding: 20px 16px;
+    text-align: center;
+    color: var(--gray);
+    font-size: 0.8rem;
+    margin-top: 32px;
+  }
+  footer .logo { font-size: 1.4rem; margin-bottom: 6px; display: block; }
+
+  /* LEAGUE SELECT */
+  .league-select {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    margin-bottom: 16px;
+  }
+  .league-select::-webkit-scrollbar { display: none; }
+  .league-btn {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    background: var(--black3);
+    border: 1px solid var(--gray2);
+    border-radius: 20px;
+    color: var(--gray);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .league-btn.active, .league-btn:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  /* UPDATE TIME */
+  .update-time {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--gray);
+    padding: 8px;
+  }
+
+  /* API NOTICE */
+  .api-notice {
+    background: rgba(227,0,15,0.1);
+    border: 1px solid rgba(227,0,15,0.3);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+    font-size: 0.82rem;
+    color: var(--gray);
+    text-align: center;
+  }
+  .api-notice strong { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">GOL<span>TIME</span></div>
+  <ul class="nav-links">
+    <li><a href="#" class="active">🏠</a></li>
+    <li><a href="#">📱 البوت</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="live-badge"><div class="live-dot"></div> مباشر الآن</div>
+  <h1>GOL<span>TIME</span></h1>
+  <p>الكرة في وقتها ⚽ نتائج • توقعات • جداول</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('live')">🔴 مباشر</div>
+  <div class="tab" onclick="showTab('today')">📅 اليوم</div>
+  <div class="tab" onclick="showTab('standings')">🏆 الجداول</div>
+  <div class="tab" onclick="showTab('predict')">🎯 توقعات</div>
+</div>
+
+<!-- LIVE -->
+<div class="section active" id="tab-live">
+  <div class="api-notice">
+    ⚡ هذا موقع تجريبي. لربطه بالبيانات الحقيقية تحتاج <strong>API Key</strong> من api-football.com
+  </div>
+  <div id="live-content">
+    <div class="league-header"><span class="league-flag">🏴</span><span class="league-name">الدوري الإنجليزي الممتاز</span></div>
+    <div class="match-card">
+      <div class="match-top">
+        <div class="team"><div class="team-logo">🔴</div><span class="team-name">مانشستر يونايتد</span></div>
+        <div class="score-box">
+          <div class="status-badge status-live">مباشر</div>
+          <div class="score live">2 - 1</div>
+          <div class="match-time live-time">67'</div>
+        </div>
+        <div class="team team-away"><div class="team-logo">🔵</div><span class="team-name">مانشستر سيتي</span></div>
+      </div>
+    </div>
+    <div class="match-card">
+      <div class="match-top">
+        <div class="team"><div class="team-logo">🔴</div><span class="team-name">ليفربول</span></div>
+        <div class="score-box">
+          <div class="status-badge status-live">مباشر</div>
+          <div class="score live">1 - 1</div>
+          <div class="match-time live-time">45'</div>
+        </div>
+        <div class="team team-away"><div class="team-logo">⚪</div><span class="team-name">آرسنال</span></div>
+      </div>
+    </div>
+
+    <div class="league-header"><span class="league-flag">🇪🇸</span><span class="league-name">الدوري الإسباني</span></div>
+    <div class="match-card">
+      <div class="match-top">
+        <div class="team"><div class="team-logo">🔵</div><span class="team-name">برشلونة</span></div>
+        <div class="score-box">
+          <div class="status-badge status-ft">انتهت</div>
+          <div class="score">3 - 1</div>
+          <div class="match-time">90'</div>
+        </div>
+        <div class="team team-away"><div class="team-logo">⚪</div><span class="team-name">ريال مدريد</span></div>
+      </div>
+    </div>
+    <div class="league-header"><span class="league-flag">🇩🇪</span><span class="league-name">الدوري الألماني</span></div>
+    <div class="match-card">
+      <div class="match-top">
+        <div class="team"><div class="team-logo">🔴</div><span class="team-name">بايرن ميونخ</span></div>
+        <div class="score-box">
+          <div class="status-badge status-ns">⏰ 21:30</div>
+          <div class="score" style="color:var(--gray)">- VS -</div>
+          <div class="match-time">لم تبدأ</div>
+        </div>
+        <div class="team team-away"><div class="team-logo">🟡</div><span class="team-name">دورتموند</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="update-time">آخر تحديث: <span id="update-time">--:--</span></div>
+</div>
+
+<!-- TODAY -->
+<div class="section" id="tab-today">
+  <div class="league-select">
+    <button class="league-btn active" onclick="filterLeague(this,'all')">الكل</button>
+    <button class="league-btn" onclick="filterLeague(this,'epl')">🏴 البريميرليج</button>
+    <button class="league-btn" onclick="filterLeague(this,'laliga')">🇪🇸 الليغا</button>
+    <button class="league-btn" onclick="filterLeague(this,'bund')">🇩🇪 البوندسليغا</button>
+    <button class="league-btn" onclick="filterLeague(this,'ucl')">🌍 الأبطال</button>
+  </div>
+  <div id="today-content">
+    <div class="league-header"><span class="league-flag">🏴</span><span class="league-name">الدوري الإنجليزي الممتاز</span></div>
+    <div class="match-card" data-league="epl">
+      <div class="match-top">
+        <div class="team"><div class="team-logo">🔵</div><span class="team-name">تشيلسي</span></div>
+        <div class="score-box">
+          <div class="status-badge status-ns">⏰ 18:00</div>
+          <div class="score" style="color:var(--gray); font-size:1.1rem">VS</div>
+        </div>
+        <div class="team team-away"><div class="team-logo">🔵</div><span class="team-name">إيفرتون</span></div>
+      </div>
+    </div>
+    <div class="match-card" data-league="epl">
+      <div class="match-top">
+        <div class="team"><div class="team-logo">⚪</div><span class="team-name">توتنهام</span></div>
+        <div class="score-box">
+          <div class="status-badge status-ns">⏰ 20:30</div>
+          <div class="score" style="color:var(--gray); font-size:1.1rem">VS</div>
+        </div>
+        <div class="team team-away"><div class="team-logo">🔴</div><span class="team-name">نيوكاسل</span></div>
+      </div>
+    </div>
+    <div class="league-header"><span class="league-flag">🇮🇹</span><span class="league-name">الدوري الإيطالي</span></div>
+    <div class="match-card" data-league="seria">
+      <div class="match-top">
+        <div class="team"><div class="team-logo">⚫</div><span class="team-name">ميلان</span></div>
+        <div class="score-box">
+          <div class="status-badge status-ns">⏰ 21:45</div>
+          <div class="score" style="color:var(--gray); font-size:1.1rem">VS</div>
+        </div>
+        <div class="team team-away"><div class="team-logo">⚫</div><span class="team-name">إنتر ميلان</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STANDINGS -->
+<div class="section" id="tab-standings">
+  <div class="league-select">
+    <button class="league-btn active" onclick="showStandings(this,'epl')">🏴 البريميرليج</button>
+    <button class="league-btn" onclick="showStandings(this,'laliga')">🇪🇸 الليغا</button>
+    <button class="league-btn" onclick="showStandings(this,'bund')">🇩🇪 البوندسليغا</button>
+  </div>
+  <div id="standings-content">
+    <table class="standings-table">
+      <thead>
+        <tr>
+          <th>#  الفريق</th>
+          <th>لع</th><th>ف</th><th>ت</th><th>خ</th><th>ن</th>
+        </tr>
+      </thead>
+      <tbody id="standings-body">
+        <tr><td><span class="rank top3">1</span> ليفربول</td><td>27</td><td>20</td><td>5</td><td>2</td><td class="pts">65</td></tr>
+        <tr><td><span class="rank top3">2</span> آرسنال</td><td>27</td><td>18</td><td>4</td><td>5</td><td class="pts">58</td></tr>
+        <tr><td><span class="rank top3">3</span> مانشستر سيتي</td><td>27</td><td>16</td><td>6</td><td>5</td><td class="pts">54</td></tr>
+        <tr><td><span class="rank">4</span> نيوكاسل</td><td>27</td><td>15</td><td>5</td><td>7</td><td class="pts">50</td></tr>
+        <tr><td><span class="rank">5</span> تشيلسي</td><td>27</td><td>14</td><td>6</td><td>7</td><td class="pts">48</td></tr>
+        <tr><td><span class="rank">6</span> أستون فيلا</td><td>27</td><td>13</td><td>5</td><td>9</td><td class="pts">44</td></tr>
+        <tr><td><span class="rank">7</span> توتنهام</td><td>27</td><td>12</td><td>6</td><td>9</td><td class="pts">42</td></tr>
+        <tr><td><span class="rank">8</span> نوتنغهام فورست</td><td>27</td><td>11</td><td>7</td><td>9</td><td class="pts">40</td></tr>
+        <tr><td><span class="rank">9</span> فولهام</td><td>27</td><td>11</td><td>5</td><td>11</td><td class="pts">38</td></tr>
+        <tr><td><span class="rank">10</span> برايتون</td><td>27</td><td>10</td><td>7</td><td>10</td><td class="pts">37</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PREDICT -->
+<div class="section" id="tab-predict">
+  <div class="pred-card">
+    <div class="pred-league">🏴 الدوري الإنجليزي | ⏰ 20:30</div>
+    <div class="pred-teams">مانشستر سيتي <span>VS</span> ليفربول</div>
+    <div class="pred-bars">
+      <div class="bar-home" style="width:45%"></div>
+      <div class="bar-draw" style="width:25%"></div>
+      <div class="bar-away" style="width:30%"></div>
+    </div>
+    <div class="pred-labels">
+      <span class="pred-win">فوز المضيف 45%</span>
+      <span>تعادل 25%</span>
+      <span>فوز الضيف 30%</span>
+    </div>
+  </div>
+  <div class="pred-card">
+    <div class="pred-league">🇪🇸 الليغا | ⏰ 21:00</div>
+    <div class="pred-teams">برشلونة <span>VS</span> أتلتيكو مدريد</div>
+    <div class="pred-bars">
+      <div class="bar-home" style="width:55%"></div>
+      <div class="bar-draw" style="width:22%"></div>
+      <div class="bar-away" style="width:23%"></div>
+    </div>
+    <div class="pred-labels">
+      <span class="pred-win">فوز المضيف 55%</span>
+      <span>تعادل 22%</span>
+      <span>فوز الضيف 23%</span>
+    </div>
+  </div>
+  <div class="pred-card">
+    <div class="pred-league">🇩🇪 البوندسليغا | ⏰ 19:30</div>
+    <div class="pred-teams">بايرن ميونخ <span>VS</span> دورتموند</div>
+    <div class="pred-bars">
+      <div class="bar-home" style="width:62%"></div>
+      <div class="bar-draw" style="width:18%"></div>
+      <div class="bar-away" style="width:20%"></div>
+    </div>
+    <div class="pred-labels">
+      <span class="pred-win">فوز المضيف 62%</span>
+      <span>تعادل 18%</span>
+      <span>فوز الضيف 20%</span>
+    </div>
+  </div>
+  <p style="text-align:center; color:var(--gray); font-size:0.75rem; margin-top:16px;">⚠️ التوقعات للترفيه فقط</p>
+</div>
+
+
+  <!-- TELEGRAM CONTACT -->
+  <div style="padding:16px;">
+    <a href="https://t.me/J_R66" target="_blank" style="
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      background:linear-gradient(135deg,#0088cc,#005f8f);
+      color:white; text-decoration:none;
+      padding:14px; border-radius:12px;
+      font-family:Cairo,sans-serif; font-weight:700; font-size:0.95rem;
+    ">
+      <span style="font-size:1.4rem;">📲</span>
+      تواصل معنا على تيليغرام
+      <span style="font-size:0.8rem;opacity:0.8;">@J_R66</span>
+    </a>
+  </div>
+<footer>
+  <span class="logo">GOL<span style="color:var(--red)">TIME</span></span>
+  <p>⚽ الكرة في وقتها</p>
+  <p style="margin-top:8px; font-size:0.7rem;">جميع الحقوق محفوظة © 2026 GolTime</p>
+</footer>
+
+<script>
+  // Update time
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('update-time').textContent =
+      now.toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'});
+  }
+  updateTime();
+  setInterval(updateTime, 30000);
+
+  // Tab switching
+  function showTab(tab) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // League filter
+  function filterLeague(btn, league) {
+    document.querySelectorAll('.league-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.match-card[data-league]').forEach(card => {
+      card.style.display = (league === 'all' || card.dataset.league === league) ? 'block' : 'none';
+    });
+  }
+
+  // Standings switcher
+  const standingsData = {
+    epl: [
+      ['ليفربول','27','20','5','2','65'],
+      ['آرسنال','27','18','4','5','58'],
+      ['مانشستر سيتي','27','16','6','5','54'],
+      ['نيوكاسل','27','15','5','7','50'],
+      ['تشيلسي','27','14','6','7','48'],
+      ['أستون فيلا','27','13','5','9','44'],
+      ['توتنهام','27','12','6','9','42'],
+      ['نوتنغهام','27','11','7','9','40'],
+      ['فولهام','27','11','5','11','38'],
+      ['برايتون','27','10','7','10','37'],
+    ],
+    laliga: [
+      ['برشلونة','27','21','3','3','66'],
+      ['ريال مدريد','27','19','4','4','61'],
+      ['أتلتيكو مدريد','27','17','5','5','56'],
+      ['أوساسونا','27','13','6','8','45'],
+      ['فياريال','27','12','7','8','43'],
+      ['ريال بيتيس','27','11','8','8','41'],
+      ['ريال سوسيداد','27','11','6','10','39'],
+      ['راسينغ','27','10','7','10','37'],
+      ['سيلتا فيغو','27','9','8','10','35'],
+      ['خيتافي','27','9','6','12','33'],
+    ],
+    bund: [
+      ['بايرن ميونخ','26','19','4','3','61'],
+      ['باير ليفركوزن','26','17','5','4','56'],
+      ['بوروسيا دورتموند','26','15','5','6','50'],
+      ['لايبزيغ','26','14','6','6','48'],
+      ['فرانكفورت','26','13','5','8','44'],
+      ['فريبورغ','26','11','7','8','40'],
+      ['هوفنهايم','26','10','8','8','38'],
+      ['بريمن','26','10','6','10','36'],
+      ['أوغسبورغ','26','9','7','10','34'],
+      ['ماينتس','26','9','6','11','33'],
+    ]
+  };
+
+  function showStandings(btn, league) {
+    document.querySelectorAll('.league-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const data = standingsData[league];
+    const tbody = document.getElementById('standings-body');
+    tbody.innerHTML = data.map((t,i) =>
+      `<tr><td><span class="rank ${i<3?'top3':''}">${i+1}</span> ${t[0]}</td>
+       <td>${t[1]}</td><td>${t[2]}</td><td>${t[3]}</td><td>${t[4]}</td>
+       <td class="pts">${t[5]}</td></tr>`
+    ).join('');
+  }
+</script>
+</body>
+</html>
